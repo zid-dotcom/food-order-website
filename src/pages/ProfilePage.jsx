@@ -7,6 +7,11 @@ import { Toast } from '../components/common/Toast';
 export const ProfilePage = () => {
   const navigate = useNavigate();
   const { user, logout, addAddress, selectAddress } = useAuth();
+  const roleLabels = {
+    user: 'FOODLY ONE MEMBER',
+    admin: 'ADMIN ACCOUNT',
+    super_admin: 'SUPER ADMIN ACCOUNT'
+  };
 
   const [isAddAddressOpen, setIsAddAddressOpen] = useState(false);
   const [newType, setNewType] = useState('Home');
@@ -74,7 +79,7 @@ export const ProfilePage = () => {
               <h1 className="text-lg font-semibold text-gray-800">{user.name}</h1>
               <p className="text-xs text-gray-500 font-normal">{user.phone} • {user.email}</p>
               <div className="inline-flex items-center gap-1 mt-1 text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded uppercase">
-                <Shield className="w-3 h-3" /> FOODLY ONE MEMBER
+                <Shield className="w-3 h-3" /> {roleLabels[user.role] || roleLabels.user}
               </div>
             </div>
           </div>

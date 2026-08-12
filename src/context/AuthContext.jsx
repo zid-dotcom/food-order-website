@@ -6,7 +6,9 @@ const initialUser = {
   name: "Arjun Nair",
   email: "arjun.nair@example.com",
   phone: "+91 98950 12345",
+  password: "",
   isLoggedIn: true,
+  role: "user",
   addresses: [
     {
       id: "addr-1",
@@ -47,21 +49,32 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('foodly_location', JSON.stringify(selectedLocation));
   }, [selectedLocation]);
 
-  const login = (mobileOrEmail) => {
+  const login = (mobileOrEmail, password, role = 'user') => {
+    const roleNames = {
+      user: "Foodly User",
+      admin: "Foodly Admin",
+      super_admin: "Super Admin"
+    };
+
     setUser(prev => ({
       ...prev,
+      name: roleNames[role] || prev.name,
       email: mobileOrEmail.includes('@') ? mobileOrEmail : prev.email,
       phone: !mobileOrEmail.includes('@') ? mobileOrEmail : prev.phone,
-      isLoggedIn: true
+      password,
+      isLoggedIn: true,
+      role
     }));
   };
 
-  const signup = (name, email, phone) => {
+  const signup = (name, email, phone, password) => {
     setUser({
       name: name || "Foodly User",
       email: email || "user@foodly.com",
       phone: phone || "+91 98765 43210",
+      password,
       isLoggedIn: true,
+      role: "user",
       addresses: [
         {
           id: "addr-1",
