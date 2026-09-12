@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider, useCart } from './context/CartContext';
 import { FavoritesProvider } from './context/FavoritesContext';
@@ -10,6 +10,7 @@ import { MobileHeader } from './components/common/MobileHeader';
 import { BottomNavigation } from './components/common/BottomNavigation';
 import { CartBar } from './components/common/CartBar';
 import { Footer } from './components/common/Footer';
+import { ProtectedRoute } from './components/common/ProtectedRoute';
 
 import { HomePage } from './pages/HomePage';
 import { RestaurantsPage } from './pages/RestaurantsPage';
@@ -24,6 +25,8 @@ import { LoginPage } from './pages/LoginPage';
 import { SignupPage } from './pages/SignupPage';
 import { FavoritesPage } from './pages/FavoritesPage';
 import { HelpPage } from './pages/HelpPage';
+import { AdminDashboardPage } from './pages/AdminDashboardPage';
+import { SuperAdminDashboardPage } from './pages/SuperAdminDashboardPage';
 
 const RestaurantConflictModal = () => {
   const { restaurantConflictModal, closeConflictModal, confirmClearAndAdd, currentRestaurant } = useCart();
@@ -56,6 +59,86 @@ const RestaurantConflictModal = () => {
   );
 };
 
+const AppContent = () => {
+  const location = useLocation();
+  const isDashboard = location.pathname.startsWith('/admin') || location.pathname.startsWith('/super-admin');
+
+  return (
+    <div className="min-h-screen flex flex-col bg-white text-gray-900 font-sans antialiased selection:bg-orange-500 selection:text-white">
+      {/* Desktop & Mobile Top Headers (hidden on custom dashboard views) */}
+      {!isDashboard && <Navbar />}
+      {!isDashboard && <MobileHeader />}
+
+      {/* Main Content View */}
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/restaurants" element={<RestaurantsPage />} />
+          <Route path="/restaurants/:id" element={<RestaurantDetailsPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/offers" element={<OffersPage />} />
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/checkout" element={<CheckoutPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/help" element={<HelpPage />} />
+
+          {/* Admin Dashboard */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/*"
+            element={
+              <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+                <AdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Super Admin Dashboard */}
+          <Route
+            path="/super-admin"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SuperAdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/super-admin/*"
+            element={
+              <ProtectedRoute allowedRoles={['super_admin']}>
+                <SuperAdminDashboardPage />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </main>
+
+      {/* Floating Bottom Cart Bar */}
+      {!isDashboard && <CartBar />}
+
+      {/* Mobile Bottom Navigation */}
+      {!isDashboard && <BottomNavigation />}
+
+      {/* Footer */}
+      {!isDashboard && <Footer />}
+
+      {/* Multi-restaurant Warning Modal */}
+      <RestaurantConflictModal />
+    </div>
+  );
+};
+
 export default function App() {
   return (
     <AuthProvider>
@@ -63,44 +146,7 @@ export default function App() {
         <FavoritesProvider>
           <OrderProvider>
             <BrowserRouter>
-              <div className="min-h-screen flex flex-col bg-white text-gray-900 font-sans antialiased selection:bg-orange-500 selection:text-white">
-                
-                {/* Desktop & Mobile Top Headers */}
-                <Navbar />
-                <MobileHeader />
-
-                {/* Main Content View */}
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/restaurants" element={<RestaurantsPage />} />
-                    <Route path="/restaurants/:id" element={<RestaurantDetailsPage />} />
-                    <Route path="/search" element={<SearchPage />} />
-                    <Route path="/offers" element={<OffersPage />} />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/checkout" element={<CheckoutPage />} />
-                    <Route path="/orders" element={<OrdersPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<SignupPage />} />
-                    <Route path="/favorites" element={<FavoritesPage />} />
-                    <Route path="/help" element={<HelpPage />} />
-                  </Routes>
-                </main>
-
-                {/* Floating Bottom Cart Bar */}
-                <CartBar />
-
-                {/* Mobile Bottom Navigation */}
-                <BottomNavigation />
-
-                {/* Footer */}
-                <Footer />
-
-                {/* Multi-restaurant Warning Modal */}
-                <RestaurantConflictModal />
-
-              </div>
+              <AppContent />
             </BrowserRouter>
           </OrderProvider>
         </FavoritesProvider>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MapPin, Search, ShoppingBag, User, ChevronDown, UtensilsCrossed, Menu, X, ArrowUpRight, Percent, HelpCircle } from 'lucide-react';
+import { MapPin, Search, ShoppingBag, User, ChevronDown, UtensilsCrossed, Menu, X, ArrowUpRight, Percent, HelpCircle, ShieldCheck, Crown } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { LocationModal } from './LocationModal';
@@ -131,6 +131,34 @@ export const MobileHeader = () => {
                 <span>Partner with us</span>
                 <span className="text-gray-400">&rarr;</span>
               </Link>
+
+              {user.isLoggedIn && user.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 bg-orange-600 rounded-xl text-white font-bold text-xs"
+                >
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-white" />
+                    <span>Admin Dashboard</span>
+                  </div>
+                  <span className="text-[10px] text-orange-200">Open &rarr;</span>
+                </Link>
+              )}
+
+              {user.isLoggedIn && user.role === 'super_admin' && (
+                <Link
+                  to="/super-admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-3 bg-purple-900 rounded-xl text-white font-bold text-xs"
+                >
+                  <div className="flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-purple-300" />
+                    <span>Super Admin Console</span>
+                  </div>
+                  <span className="text-[10px] text-purple-200">Open &rarr;</span>
+                </Link>
+              )}
 
               {user.isLoggedIn ? (
                 <Link

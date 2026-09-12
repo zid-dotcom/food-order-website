@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
-
+ 
 const initialUser = {
   name: "Arjun Nair",
   email: "arjun.nair@example.com",
@@ -93,9 +93,23 @@ export const AuthProvider = ({ children }) => {
     setUser(prev => ({ ...prev, isLoggedIn: false }));
   };
 
+  const switchRole = (newRole) => {
+    const roleNames = {
+      user: "Arjun Nair",
+      admin: "Foodly Admin",
+      super_admin: "Super Admin"
+    };
+    setUser(prev => ({
+      ...prev,
+      role: newRole,
+      name: roleNames[newRole] || prev.name,
+      isLoggedIn: true
+    }));
+  };
+
   const addAddress = (newAddr) => {
     const id = `addr-${Date.now()}`;
-    const addressObj = { id, ...newAddr, tag: prev => prev.addresses.length === 0 ? "DEFAULT" : "" };
+    const addressObj = { id, ...newAddr, tag: "" };
     setUser(prev => ({
       ...prev,
       addresses: [...prev.addresses, addressObj],
@@ -111,12 +125,18 @@ export const AuthProvider = ({ children }) => {
     return user.addresses?.find(a => a.id === user.selectedAddressId) || user.addresses?.[0] || null;
   };
 
+  const isAdmin = user?.role === 'admin' || user?.role === 'super_admin';
+  const isSuperAdmin = user?.role === 'super_admin';
+
   return (
     <AuthContext.Provider value={{
       user,
       login,
       signup,
       logout,
+      switchRole,
+      isAdmin,
+      isSuperAdmin,
       addAddress,
       selectAddress,
       getActiveAddress,

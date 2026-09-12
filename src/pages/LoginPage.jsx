@@ -42,7 +42,13 @@ export const LoginPage = () => {
     e.preventDefault();
     if (!mobileOrEmail.trim() || !password.trim()) return;
     login(mobileOrEmail, password, selectedLoginType.id);
-    navigate('/');
+    if (selectedLoginType.id === 'super_admin') {
+      navigate('/super-admin');
+    } else if (selectedLoginType.id === 'admin') {
+      navigate('/admin');
+    } else {
+      navigate('/');
+    }
   };
 
   const ActiveIcon = selectedLoginType.Icon;

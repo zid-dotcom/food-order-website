@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, Percent, HelpCircle, User, ShoppingBag, MapPin, ChevronDown, UtensilsCrossed } from 'lucide-react';
+import { Search, Percent, HelpCircle, User, ShoppingBag, MapPin, ChevronDown, UtensilsCrossed, ShieldCheck, Crown } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { LocationModal } from './LocationModal';
@@ -57,7 +57,7 @@ export const Navbar = () => {
           </div>
 
           {/* Right: Nav Links */}
-          <nav className="hidden md:flex items-center gap-7 text-xs sm:text-sm font-medium text-gray-700">
+          <nav className="hidden md:flex items-center gap-6 text-xs sm:text-sm font-medium text-gray-700">
             <Link
               to="/search"
               className={`flex items-center gap-2 hover:text-orange-500 transition-colors ${
@@ -90,6 +90,29 @@ export const Navbar = () => {
               <HelpCircle className="w-4 h-4" />
               <span>Help</span>
             </Link>
+
+            {/* Admin or Super Admin Quick Dashboard Access */}
+            {user.isLoggedIn && user.role === 'admin' && (
+              <Link
+                to="/admin"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded-xl text-xs font-bold shadow-xs transition-colors"
+                title="Open Store Admin Dashboard"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>Admin Dashboard</span>
+              </Link>
+            )}
+
+            {user.isLoggedIn && user.role === 'super_admin' && (
+              <Link
+                to="/super-admin"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-xs transition-colors"
+                title="Open Super Admin Console"
+              >
+                <Crown className="w-4 h-4" />
+                <span>Super Admin</span>
+              </Link>
+            )}
 
             {user.isLoggedIn ? (
               <Link

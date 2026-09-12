@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, MapPin, Heart, Utensils, HelpCircle, LogOut, Plus, Shield, Home, Briefcase } from 'lucide-react';
+import { User, MapPin, Heart, Utensils, HelpCircle, LogOut, Plus, Shield, Home, Briefcase, Crown, ShieldCheck, ArrowRight, RefreshCw } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Toast } from '../components/common/Toast';
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
-  const { user, logout, addAddress, selectAddress } = useAuth();
+  const { user, logout, addAddress, selectAddress, switchRole } = useAuth();
   const roleLabels = {
     user: 'FOODLY ONE MEMBER',
-    admin: 'ADMIN ACCOUNT',
-    super_admin: 'SUPER ADMIN ACCOUNT'
+    admin: 'STORE ADMIN ACCOUNT',
+    super_admin: 'SUPER ADMIN (HQ)'
   };
 
   const [isAddAddressOpen, setIsAddAddressOpen] = useState(false);
@@ -70,9 +70,13 @@ export const ProfilePage = () => {
       <div className="max-w-4xl mx-auto px-4 space-y-6">
         
         {/* User Card */}
-        <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-2xs flex items-center justify-between">
+        <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-orange-500 to-amber-500 text-white rounded-2xl flex items-center justify-center font-semibold text-xl shadow-xs">
+            <div className={`w-14 h-14 text-white rounded-2xl flex items-center justify-center font-semibold text-xl shadow-xs ${
+              user.role === 'super_admin'
+                ? 'bg-gradient-to-tr from-purple-600 to-indigo-600'
+                : 'bg-gradient-to-tr from-orange-500 to-amber-500'
+            }`}>
               {user.name.charAt(0)}
             </div>
             <div>
@@ -84,13 +88,106 @@ export const ProfilePage = () => {
             </div>
           </div>
 
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-600 font-medium text-xs rounded-xl transition-colors cursor-pointer"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Logout</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gray-100 hover:bg-red-50 hover:text-red-600 text-gray-600 font-medium text-xs rounded-xl transition-colors cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Logout</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Role-Specific Dashboard Launchers */}
+        {(user.role === 'admin' || user.role === 'super_admin') && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Link
+              to="/admin"
+              className="p-5 rounded-3xl bg-gradient-to-br from-orange-500 to-amber-500 text-white shadow-md hover:shadow-lg transition-all group flex flex-col justify-between h-40"
+            >
+              <div className="flex items-start justify-between">
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <ShieldCheck className="w-6 h-6 text-white" />
+                </div>
+                <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  Store Operations
+                </span>
+              </div>
+              <div>
+                <h3 className="text-base font-black tracking-tight">Admin Dashboard</h3>
+                <p className="text-xs text-white/90 font-medium mt-0.5">Manage live orders queue, update dish availability & review outlet metrics.</p>
+              </div>
+              <div className="flex items-center gap-1 text-xs font-black text-white group-hover:translate-x-1 transition-transform">
+                <span>Enter Admin Console</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </div>
+            </Link>
+
+            {user.role === 'super_admin' && (
+              <Link
+                to="/super-admin"
+                className="p-5 rounded-3xl bg-gradient-to-br from-purple-700 to-indigo-700 text-white shadow-md hover:shadow-lg transition-all group flex flex-col justify-between h-40"
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                    <Crown className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="text-[10px] font-bold bg-white/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                    Platform HQ
+                  </span>
+                </div>
+                <div>
+                  <h3 className="text-base font-black tracking-tight">Super Admin Console</h3>
+                  <p className="text-xs text-white/90 font-medium mt-0.5">Multi-restaurant governance, GMV financials, user roles & global configurations.</p>
+                </div>
+                <div className="flex items-center gap-1 text-xs font-black text-white group-hover:translate-x-1 transition-transform">
+                  <span>Enter Super Admin HQ</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </div>
+              </Link>
+            )}
+          </div>
+        )}
+
+        {/* Demo Persona Switcher */}
+        <div className="bg-white rounded-3xl p-5 border border-gray-100 shadow-2xs space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <RefreshCw className="w-4 h-4 text-orange-500" />
+              <h3 className="font-bold text-xs uppercase tracking-wider text-gray-700">Demo Persona Switcher</h3>
+            </div>
+            <span className="text-[11px] text-gray-400">Switch current account role for testing</span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { id: 'user', label: 'Customer (User)', desc: 'Browse & Order Food' },
+              { id: 'admin', label: 'Store Admin', desc: 'Restaurant Manager' },
+              { id: 'super_admin', label: 'Super Admin', desc: 'Foodly Platform HQ' }
+            ].map(persona => {
+              const isSelected = user.role === persona.id;
+              return (
+                <button
+                  key={persona.id}
+                  onClick={() => {
+                    switchRole(persona.id);
+                    setToastMsg(`Switched role to ${persona.label}`);
+                    if (persona.id === 'admin') navigate('/admin');
+                    if (persona.id === 'super_admin') navigate('/super-admin');
+                  }}
+                  className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                    isSelected
+                      ? 'border-orange-500 bg-orange-50/50 shadow-xs'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <div className="font-bold text-xs text-gray-900">{persona.label}</div>
+                  <div className="text-[10px] text-gray-500 mt-0.5">{persona.desc}</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Saved Delivery Addresses */}

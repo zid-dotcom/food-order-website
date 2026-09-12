@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { MapPin, Search, ChevronDown, UtensilsCrossed, ArrowRight, User, ShoppingBag, ArrowUpRight, Menu, X, Percent, HelpCircle } from 'lucide-react';
+import { MapPin, Search, ChevronDown, UtensilsCrossed, ArrowRight, User, ShoppingBag, ArrowUpRight, Menu, X, Percent, HelpCircle, ShieldCheck, Crown } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { LocationModal } from '../common/LocationModal';
@@ -40,7 +40,7 @@ export const HeroHeader = () => {
           </Link>
 
           {/* Desktop Nav Options */}
-          <div className="hidden md:flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-bold">
+          <div className="hidden md:flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-bold">
             <Link to="/help" className="hover:text-orange-100 transition-colors">
               Foodly Corporate
             </Link>
@@ -52,16 +52,37 @@ export const HeroHeader = () => {
             {/* "Get the App ↗" button */}
             <Link
               to="/help"
-              className="flex items-center gap-2 border-2 border-white hover:bg-white/10 px-5 py-2.5 rounded-2xl text-sm font-extrabold text-white transition-all cursor-pointer shadow-sm hover:scale-105"
+              className="flex items-center gap-2 border-2 border-white hover:bg-white/10 px-4 py-2 rounded-2xl text-xs sm:text-sm font-extrabold text-white transition-all cursor-pointer shadow-sm hover:scale-105"
             >
               <span>Get the App</span>
-              <ArrowUpRight className="w-5 h-5 text-white stroke-[2.5]" />
+              <ArrowUpRight className="w-4 h-4 text-white stroke-[2.5]" />
             </Link>
+
+            {/* Admin or Super Admin direct dashboard buttons */}
+            {user.isLoggedIn && user.role === 'admin' && (
+              <Link
+                to="/admin"
+                className="flex items-center gap-1.5 bg-black hover:bg-gray-900 border border-white/20 text-white px-4 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer shadow-md"
+              >
+                <ShieldCheck className="w-4 h-4 text-orange-400" />
+                <span>Admin Dashboard</span>
+              </Link>
+            )}
+
+            {user.isLoggedIn && user.role === 'super_admin' && (
+              <Link
+                to="/super-admin"
+                className="flex items-center gap-1.5 bg-purple-900 hover:bg-purple-800 border border-purple-400/30 text-white px-4 py-2 rounded-full text-xs font-extrabold transition-all cursor-pointer shadow-md"
+              >
+                <Crown className="w-4 h-4 text-purple-300" />
+                <span>Super Admin</span>
+              </Link>
+            )}
 
             {user.isLoggedIn ? (
               <Link
                 to="/profile"
-                className="flex items-center gap-2 bg-black hover:bg-gray-900 text-white px-5 py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all cursor-pointer shadow-md"
+                className="flex items-center gap-2 bg-black hover:bg-gray-900 text-white px-4 py-2 rounded-full text-xs sm:text-sm font-extrabold transition-all cursor-pointer shadow-md"
               >
                 <User className="w-4 h-4 text-orange-400" />
                 <span>{user.name.split(' ')[0]}</span>
@@ -69,7 +90,7 @@ export const HeroHeader = () => {
             ) : (
               <Link
                 to="/login"
-                className="bg-black hover:bg-gray-900 text-white px-6 py-2.5 rounded-full text-xs sm:text-sm font-extrabold transition-all cursor-pointer shadow-md hover:scale-105"
+                className="bg-black hover:bg-gray-900 text-white px-5 py-2 rounded-full text-xs sm:text-sm font-extrabold transition-all cursor-pointer shadow-md hover:scale-105"
               >
                 Sign in
               </Link>
@@ -166,6 +187,34 @@ export const HeroHeader = () => {
                 <HelpCircle className="w-4 h-4" />
                 <span>Help & Support</span>
               </Link>
+
+              {user.isLoggedIn && user.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-4 bg-orange-700 rounded-xl text-white font-extrabold text-xs shadow-xs"
+                >
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-orange-200" />
+                    <span>Admin Dashboard</span>
+                  </div>
+                  <span className="text-[10px] text-orange-200">Open &rarr;</span>
+                </Link>
+              )}
+
+              {user.isLoggedIn && user.role === 'super_admin' && (
+                <Link
+                  to="/super-admin"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-between py-2.5 px-4 bg-purple-900 rounded-xl text-white font-extrabold text-xs shadow-xs"
+                >
+                  <div className="flex items-center gap-2">
+                    <Crown className="w-4 h-4 text-purple-300" />
+                    <span>Super Admin Console</span>
+                  </div>
+                  <span className="text-[10px] text-purple-300">Open &rarr;</span>
+                </Link>
+              )}
 
               {user.isLoggedIn ? (
                 <Link

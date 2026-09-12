@@ -54,12 +54,26 @@ export const OrderProvider = ({ children }) => {
     return orders.find(o => o.status === "Preparing" || o.status === "Out for Delivery") || null;
   };
 
+  const updateOrderStatus = (orderId, newStatus) => {
+    setOrders(prev => prev.map(order => {
+      if (order.id === orderId) {
+        return {
+          ...order,
+          status: newStatus,
+          estimatedDeliveryTime: newStatus === "Delivered" ? "Delivered" : order.estimatedDeliveryTime
+        };
+      }
+      return order;
+    }));
+  };
+
   return (
     <OrderContext.Provider value={{
       orders,
       placeOrder,
       getOrderById,
       getActiveOrder,
+      updateOrderStatus,
       activeTrackingId,
       setActiveTrackingId
     }}>
